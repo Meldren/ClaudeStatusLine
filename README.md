@@ -20,7 +20,7 @@ Rate limits are fetched from the Anthropic OAuth API using your existing Claude 
 1. Copy `statusline.mjs` to `~/.claude/`:
 
 ```bash
-curl -o ~/.claude/statusline.mjs https://raw.githubusercontent.com/Meldren/ClaudeStatusLine/main/statusline.mjs
+curl -o ~/.claude/statusline.mjs https://raw.githubusercontent.com/Meldren/ClaudeStatusLine/master/statusline.mjs
 ```
 
 2. Add to `~/.claude/settings.json`:
