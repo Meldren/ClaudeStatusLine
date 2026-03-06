@@ -44,17 +44,15 @@ curl -o ~/.claude/statusline.mjs https://raw.githubusercontent.com/Meldren/Claud
 
 ## Customization
 
-Edit the `C` object in `statusline.mjs` to change colors. Values are RGB via ANSI escape codes:
+Edit the `colors` object in `statusline.mjs` — just hex values:
 
 ```js
-const C = {
-  modelGreen: '\x1b[38;2;45;155;20m',   // model name
-  timer:      '\x1b[38;2;240;210;60m',   // session timer
-  ctx:        '\x1b[38;2;255;0;0m',       // context usage
-  git:        '\x1b[38;2;153;102;204m',   // git branch
-  blue:       '\x1b[38;2;64;82;214m',     // rate limit %
-  gray:       '\x1b[38;5;243m',           // separators & reset times
+const colors = {
+  model:      '2D9B14', // model name
+  timer:      'F0D23C', // session duration
+  ctx:        'FF0000', // context usage
+  git:        '9966CC', // git branch
+  rateLimit:  '4052D6', // rate limit %
+  separator:  '6C6C6C', // separators & reset times
 };
 ```
-
-Format: `\x1b[38;2;R;G;Bm` where R, G, B are 0-255.

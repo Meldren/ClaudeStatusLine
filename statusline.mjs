@@ -12,17 +12,21 @@ const CACHE_TTL_MS = 60_000;
 const API_TIMEOUT_MS = 5_000;
 const SESSION_DIR = join(CACHE_DIR, 'sessions');
 
-// --- ANSI Colors ---
-const C = {
-  reset: '\x1b[0m',
-  dim: '\x1b[2m',
-  modelGreen: '\x1b[38;2;45;155;20m',
-  timer: '\x1b[38;2;240;210;60m',
-  ctx: '\x1b[38;2;255;0;0m',
-  git: '\x1b[38;2;153;102;204m',
-  gray: '\x1b[38;5;243m',
-  blue: '\x1b[38;2;64;82;214m',
+// --- Colors ---
+const hex = (h) => { const n = parseInt(h, 16); return `\x1b[38;2;${n>>16&255};${n>>8&255};${n&255}m`; };
+
+const colors = {
+  model:      '2D9B14', // model name
+  timer:      'F0D23C', // session duration
+  ctx:        'FF0000', // context usage
+  git:        '9966CC', // git branch
+  rateLimit:  '4052D6', // rate limit %
+  separator:  '6C6C6C', // separators & reset times
 };
+
+const C = Object.fromEntries(Object.entries(colors).map(([k, v]) => [k, hex(v)]));
+C.reset = '\x1b[0m';
+C.dim = '\x1b[2m';
 
 function formatTokens(n) {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}m`;
@@ -190,7 +194,7 @@ async function main() {
 
   // --- Line 1 ---
   const line1Parts = [];
-  line1Parts.push(`${C.modelGreen}\u2B21 ${model}${C.reset}`);
+  line1Parts.push(`${C.model}\u2B21 ${model}${C.reset}`);
 
   if (elapsedMs != null) {
     line1Parts.push(`${C.timer}\u23F1 ${formatDuration(elapsedMs)}${C.reset}`);
@@ -208,21 +212,21 @@ async function main() {
   if (limits?.five_hour) {
     const pct = Math.round(limits.five_hour.utilization);
     const remaining = formatTimeRemaining(limits.five_hour.resets_at);
-    let text = `${C.blue}\u25F4 ${pct}%${C.reset} ${C.dim}\u00B7 5h${C.reset}`;
-    if (remaining) text += ` ${C.gray}(${remaining})${C.reset}`;
+    let text = `${C.rateLimit}\u25F4 ${pct}%${C.reset} ${C.dim}\u00B7 5h${C.reset}`;
+    if (remaining) text += ` ${C.separator}(${remaining})${C.reset}`;
     line2Parts.push(text);
   }
 
   if (limits?.seven_day) {
     const pct = Math.round(limits.seven_day.utilization);
     const remaining = formatTimeRemaining(limits.seven_day.resets_at);
-    let text = `${C.blue}\u25F7 ${pct}%${C.reset} ${C.dim}\u00B7 7d${C.reset}`;
-    if (remaining) text += ` ${C.gray}(${remaining})${C.reset}`;
+    let text = `${C.rateLimit}\u25F7 ${pct}%${C.reset} ${C.dim}\u00B7 7d${C.reset}`;
+    if (remaining) text += ` ${C.separator}(${remaining})${C.reset}`;
     line2Parts.push(text);
   }
 
   // --- Output ---
-  const sep = ` ${C.gray}|${C.reset} `;
+  const sep = ` ${C.separator}|${C.reset} `;
   let output = line1Parts.join(sep);
   if (line2Parts.length > 0) {
     output += '\n' + line2Parts.join(sep);
